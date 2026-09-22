@@ -1,3 +1,5 @@
+### Notice: The AM2RLauncher Linux release is broken. See the [Downloads](#downloads) section below.
+
 # AM2RLauncher
 A front-end application that simplifies installing the latest AM2R-Community-Updates, creating APKs for Android use, as well as Mods for AM2R. It supports Windows (x86/x64) as well as Linux (x64).
 
@@ -13,11 +15,11 @@ For further questions regarding the AM2RLauncher [see this Wiki](https://github.
 For further communication, you can reach us on [Discord](https://discord.gg/nk7UYPbd5u), [Matrix](https://matrix.to/#/#am2r-space:matrix.org), or [GitHub issues](https://github.com/AM2R-Community-Developers/AM2RLauncher/issues).
 
 ## Downloads
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/AM2R-Community-Developers/AM2RLauncher?label=GitHub&logo=github&style=flat-square) ![Flathub](https://img.shields.io/flathub/v/io.github.am2r_community_developers.AM2RLauncher?label=FlatHub&logo=flathub&logoColor=white&style=flat-square)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/AM2R-Community-Developers/AM2RLauncher?label=GitHub&logo=github&style=flat-square)
 ![AUR version](https://img.shields.io/aur/version/am2rlauncher?label=AUR&style=flat-square)      
 Downloads can be found at the [Release Page](https://github.com/AM2R-Community-Developers/AM2RLauncher/releases).
 
-For all Linux users, a [Flatpak](https://flathub.org/apps/details/io.github.am2r_community_developers.AM2RLauncher) is available and can be installed with all above dependencies bundled. This method is the recommended way for Steam Deck users.
+For all Linux users, a Flatpak is available and can be installed with all above dependencies bundled. This method is the recommended way for Steam Deck users. Install it by running the command `flatpak install io.github.am2r_community_developers.AM2RLauncher` in a terminal.
 
 ### Arch Linux
 
