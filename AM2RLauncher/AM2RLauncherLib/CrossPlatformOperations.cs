@@ -210,12 +210,36 @@ public static class CrossPlatformOperations
     }
 
     /// <summary>
-    /// Checks if command-line xdelta is installed and located in PATH.
+    /// Path to the command-line xdelta executable on Unix. Apps started from Finder or the Dock on macOS only get a
+    /// minimal PATH (/usr/bin:/bin:/usr/sbin:/sbin), so xdelta3 installed via Homebrew or MacPorts would not be found.
+    /// Because of that, the common package manager locations are checked as well before falling back to PATH lookup.
+    /// </summary>
+    private static string XdeltaPath
+    {
+        get
+        {
+            const string xdeltaName = "xdelta3";
+            if (!OS.IsMac)
+                return xdeltaName;
+
+            string[] searchDirs = { "/opt/homebrew/bin", "/usr/local/bin", "/opt/local/bin" };
+            foreach (string dir in searchDirs)
+            {
+                string candidate = $"{dir}/{xdeltaName}";
+                if (File.Exists(candidate))
+                    return candidate;
+            }
+            return xdeltaName;
+        }
+    }
+
+    /// <summary>
+    /// Checks if command-line xdelta is installed, either in PATH or in a common package manager location on macOS.
     /// </summary>
     /// <returns><see langword="true"/> if it is installed, <see langword="false"/> if not.</returns>
     public static bool CheckIfXdeltaIsInstalled()
     {
-        const string process = "xdelta3";
+        string process = XdeltaPath;
         const string arguments = "-V";
         // TODO: for mac, we need to embed two xdelta binaries, for x64 and arm
 
@@ -265,7 +289,7 @@ public static class CrossPlatformOperations
 
         ProcessStartInfo parameters = new ProcessStartInfo
         {
-            FileName = OS.IsWindows ? $"{CurrentPath}/PatchData/utilities/xdelta/xdelta3.exe" : "xdelta3",
+            FileName = OS.IsWindows ? $"{CurrentPath}/PatchData/utilities/xdelta/xdelta3.exe" : XdeltaPath,
             WorkingDirectory = $"{CurrentPath}",
             UseShellExecute = false,
             CreateNoWindow = true,
