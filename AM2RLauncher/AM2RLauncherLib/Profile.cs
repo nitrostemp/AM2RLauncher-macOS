@@ -555,6 +555,34 @@ public static class Profile
             File.Copy($"{dataPath}/Info.plist", $"{tempPath.Replace("Resources", "")}/Info.plist", true);
             File.Copy($"{Core.PatchDataPath}/data/PkgInfo", $"{tempPath.Replace("Resources", "")}/PkgInfo", true);
 
+            // The lowercasing above also renamed the runner's English.lproj/MainMenu.nib.
+            // macOS looks these up with exact case from Info.plist, so the game quits on launch unless we restore them.
+            string lowerLproj = $"{tempPath}/english.lproj";
+            string lproj = $"{tempPath}/English.lproj";
+            if (Directory.Exists(lowerLproj))
+            {
+                // Two moves, as the file system is usually case-insensitive
+                Directory.Move(lowerLproj, lproj + "_");
+                Directory.Move(lproj + "_", lproj);
+            }
+            if (File.Exists($"{lproj}/mainmenu.nib"))
+            {
+                File.Move($"{lproj}/mainmenu.nib", $"{lproj}/MainMenu.nib_");
+                File.Move($"{lproj}/MainMenu.nib_", $"{lproj}/MainMenu.nib");
+            }
+
+            // Patching invalidates the runner's code signature and the files keep the download quarantine flag,
+            // both of which make macOS kill the game on launch. Clear the flag and ad-hoc re-sign the app.
+            string appPath = Path.GetFullPath($"{tempPath}/../..");
+            foreach ((string tool, string args) in new[] { ("xattr", $"-cr \"{appPath}\""), ("codesign", $"--force --deep -s - \"{appPath}\"") })
+            {
+                using Process signProcess = Process.Start(new ProcessStartInfo { FileName = tool, Arguments = args, UseShellExecute = false });
+                signProcess?.WaitForExit();
+                if (signProcess?.ExitCode != 0)
+                    log.Error($"{tool} {args} failed with exit code {signProcess?.ExitCode}.");
+            }
+            log.Info("Restored English.lproj/MainMenu.nib and re-signed AM2R.app.");
+
             //Put profilePath back to what it was before
             tempPath = $"{Path.GetTempPath()}/AM2RLauncherProfileTemp/";
         }
